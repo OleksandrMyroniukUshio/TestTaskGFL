@@ -34,8 +34,13 @@ public class FolderController : Controller
     public IActionResult ExportToFile()
     {
         var content = _folderExportService.ExportToFile();
+        if (string.IsNullOrEmpty(content))
+        {
+            return Content("No folders to export or there was an error accessing the database.");
+        }
         return File(Encoding.UTF8.GetBytes(content), "application/json", "export.json");
     }
+
 
     [HttpPost]
     [ValidateAntiForgeryToken]

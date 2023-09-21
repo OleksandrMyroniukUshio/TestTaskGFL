@@ -17,16 +17,28 @@ namespace TestTaskGFL.Services.IOFoldersService.ExportService
         }
 
 
-        public string ExportToFile()
+        public string? ExportToFile()
         {
-            var allFolders = _dbcontext.Folders.ToList();
+            try
+            {
+                var allFolders = _dbcontext.Folders.ToList();
 
-            var topLevelFolders = allFolders.Where(f => f.ParentID == null).ToList();
+                if (!allFolders.Any())
+                    return null;
 
-            var folderDtos = topLevelFolders.Select(f => ConvertToDto(f, allFolders)).ToList();
+                var topLevelFolders = allFolders.Where(f => f.ParentID == null).ToList();
 
-            return JsonConvert.SerializeObject(folderDtos);
+                var folderDtos = topLevelFolders.Select(f => ConvertToDto(f, allFolders)).ToList();
+
+                return JsonConvert.SerializeObject(folderDtos);
+            }
+            catch (Exception ex)
+            {
+                // Optionally, you can log the exception here.
+                return null;
+            }
         }
+
 
         private FolderDto ConvertToDto(Folder folder, List<Folder> allFolders)
         {

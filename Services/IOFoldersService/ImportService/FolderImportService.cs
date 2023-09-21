@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using TestTaskGFL.Database;
 using TestTaskGFL.Models.Folders;
@@ -16,9 +17,16 @@ namespace TestTaskGFL.Services.IOFoldersService.ImportService
 
         public Folder? GetFolder(int? id)
         {
-            return id.HasValue ?
-                _dbcontext.Folders.Include(d => d.Children).Include(d => d.Parent).FirstOrDefault(d => d.ID == id) :
-                _dbcontext.Folders.Include(d => d.Children).Include(d => d.Parent).FirstOrDefault(d => d.ParentID == null);
+            try
+            {
+                return id.HasValue ?
+                    _dbcontext.Folders.Include(d => d.Children).Include(d => d.Parent).FirstOrDefault(d => d.ID == id) :
+                    _dbcontext.Folders.Include(d => d.Children).Include(d => d.Parent).FirstOrDefault(d => d.ParentID == null);
+            }
+            catch (SqlException)
+            {
+                return null;
+            }
         }
         public async Task<IEnumerable<Folder>?> ImportFromFileAsync(IFormFile file) 
         {

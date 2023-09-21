@@ -1,24 +1,26 @@
 ﻿@model Folder
 
-<h2>@Model.Name</h2>
-
-@if (Model.Parent != null)
+@if (Model != null)
 {
-    <a href="@Url.Action("Index", "Folder", new { id = Model.Parent.ID })">Return to -> @Model.Parent.Name</a>
-}
+    <h2>@Model.Name</h2>
+    @if (Model.Parent != null)
+    {
+        <a href="@Url.Action("Index", "Folder", new { id = Model.Parent.ID })">Return to -> @Model.Parent.Name</a>
+    }
 
-@if (Model.Children.Any())
-{
-    <ul>
-        @foreach (var child in Model.Children)
-        {
-            <li>
-                <a href="@Url.Action("Index", "Folder", new { id = child.ID })">@child.Name</a>
-            </li>
-        }
-    </ul>
+    @if (Model.Children.Any())
+    {
+        <ul>
+            @foreach (var child in Model.Children)
+            {
+                <li>
+                    <a href="@Url.Action("Index", "Folder", new { id = child.ID })">@child.Name</a>
+                </li>
+            }
+        </ul>
+    }
 }
 else
 {
-    <p>No child directories available.</p>
+    <p>No directories available.</p>
 }
