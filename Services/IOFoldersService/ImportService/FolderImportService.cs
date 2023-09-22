@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using TestTaskGFL.Database;
 using TestTaskGFL.Models.Folders;
@@ -28,19 +29,32 @@ namespace TestTaskGFL.Services.IOFoldersService.ImportService
                 return null;
             }
         }
-        public async Task<IEnumerable<Folder>?> ImportFromFileAsync(IFormFile file) 
+        public async Task<IEnumerable<Folder>?> ImportFromFileAsync(IFormFile file)
         {
             using var reader = new StreamReader(file.OpenReadStream());
             var content = await reader.ReadToEndAsync();
-            var folders = JsonConvert.DeserializeObject<List<Folder>>(content);
+            List<Folder> folders;
+
+            try
+            {
+                folders = JsonConvert.DeserializeObject<List<Folder>>(content);
+            }
+            catch (JsonException)
+            {
+                return null;
+            }
 
             if (folders != null && folders.All(f => !string.IsNullOrEmpty(f.Name)))
             {
+                _dbcontext.Folders.RemoveRange(_dbcontext.Folders);
                 await _dbcontext.Folders.AddRangeAsync(folders);
                 await _dbcontext.SaveChangesAsync();
+                return folders;
             }
 
-            return folders;
+            return null;
         }
+
+
     }
 }

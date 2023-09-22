@@ -32,9 +32,8 @@ namespace TestTaskGFL.Services.IOFoldersService.ExportService
 
                 return JsonConvert.SerializeObject(folderDtos);
             }
-            catch (Exception ex)
+            catch (Exception) //not handling properly only bc test
             {
-                // Optionally, you can log the exception here.
                 return null;
             }
         }

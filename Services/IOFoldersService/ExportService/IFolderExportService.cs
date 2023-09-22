@@ -4,6 +4,6 @@ namespace TestTaskGFL.Services.IOFoldersService.ExportService
 {
     public interface IFolderExportService
     {
-        public string ExportToFile();
+        public string? ExportToFile();
     }
 }
